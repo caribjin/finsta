@@ -1,7 +1,6 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finsta/config/paths.dart';
+import 'package:finsta/models/models.dart';
 import 'package:finsta/repositories/auth/base_auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/services.dart';
@@ -40,7 +39,11 @@ class AuthRepository extends BaseAuthRepository {
       });
 
       return user;
-    } on auth.FirebaseAuthException catch (error) {} on PlatformException catch (error) {}
+    } on auth.FirebaseAuthException catch (error) {
+      throw Failure(message: error.message, code: error.code);
+    } on PlatformException catch (error) {
+      throw Failure(message: error.message, code: error.code);
+    }
   }
 
   @override
@@ -48,8 +51,15 @@ class AuthRepository extends BaseAuthRepository {
     required String email,
     required String password,
   }) async {
-    // TODO: implement loginWithEmailAndPassword
-    throw UnimplementedError();
+    try {
+      final credential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+
+      return credential.user;
+    } on auth.FirebaseAuthException catch (error) {
+      throw Failure(message: error.message, code: error.code);
+    } on PlatformException catch (error) {
+      throw Failure(message: error.message, code: error.code);
+    }
   }
 
   @override
