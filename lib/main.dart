@@ -1,7 +1,10 @@
+import 'package:finsta/blocs/auth/auth_bloc.dart';
+import 'package:finsta/repositories/auth/auth_repository.dart';
 import 'package:finsta/screens/screens.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:finsta/config/custom_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,28 +15,44 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Finsta',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[50],
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        appBarTheme: AppBarTheme(
-          brightness: Brightness.light,
-          color: Colors.white,
-          iconTheme: const IconThemeData(color: Colors.black),
-          textTheme: const TextTheme(
-            headline6: TextStyle(
-              color: Colors.black,
-              fontSize: 20.0,
-              fontWeight: FontWeight.w600,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (_) => AuthRepository(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AuthBloc(
+              authRepository: context.read<AuthRepository>(),
             ),
           ),
+        ],
+        child: MaterialApp(
+          title: 'Finsta',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            scaffoldBackgroundColor: Colors.grey[50],
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            appBarTheme: AppBarTheme(
+              brightness: Brightness.light,
+              color: Colors.white,
+              iconTheme: const IconThemeData(color: Colors.black),
+              textTheme: const TextTheme(
+                headline6: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          initialRoute: SplashScreen.routeName,
+          onGenerateRoute: CustomRouter.onGenerateRoute,
         ),
       ),
-      initialRoute: SplashScreen.routeName,
-      onGenerateRoute: CustomRouter.onGenerateRoute,
     );
   }
 }
