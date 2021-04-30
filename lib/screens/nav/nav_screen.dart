@@ -9,11 +9,6 @@ class NavScreen extends StatelessWidget {
       settings: const RouteSettings(name: routeName),
       pageBuilder: (_, __, ___) => NavScreen(),
     );
-
-    // return MaterialPageRoute(
-    //   settings: const RouteSettings(name: routeName),
-    //   builder: (_) => LoginScreen(),
-    // );
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:finsta/blocs/auth/auth_bloc.dart';
+import 'package:finsta/blocs/simple_bloc_observer.dart';
 import 'package:finsta/repositories/auth/auth_repository.dart';
 import 'package:finsta/screens/screens.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Bloc.observer = SimpleBlocObserver();
   runApp(MyApp());
 }
 
