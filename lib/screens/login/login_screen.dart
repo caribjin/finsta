@@ -1,4 +1,7 @@
 import 'package:finsta/repositories/repositories.dart';
+import 'package:finsta/screens/screens.dart';
+import 'package:finsta/widgets/widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finsta/screens/login/cubit/login_cubit.dart';
@@ -35,10 +38,7 @@ class LoginScreen extends StatelessWidget {
             if (state.status == LoginStatus.error) {
               showDialog(
                 context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Error'),
-                  content: Text(state.failure.message ?? 'Error'),
-                ),
+                builder: (context) => ErrorDialog(content: state.failure.message ?? ''),
               );
             }
           },
@@ -99,7 +99,7 @@ class LoginScreen extends StatelessWidget {
                             ElevatedButton(
                               child: Text('SIGN UP'),
                               style: ElevatedButton.styleFrom(primary: Colors.grey[400]),
-                              onPressed: () => print('Sign up'),
+                              onPressed: () => Navigator.of(context).pushNamed(SignupScreen.routeName),
                             ),
                           ],
                         ),
