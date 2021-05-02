@@ -8,6 +8,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class NavScreen extends StatelessWidget {
   static const String routeName = '/nav';
 
+  final Map<BottomNavItem, GlobalKey<NavigatorState>> navigatorKeys = {
+    BottomNavItem.feed: GlobalKey<NavigatorState>(),
+    BottomNavItem.search: GlobalKey<NavigatorState>(),
+    BottomNavItem.create: GlobalKey<NavigatorState>(),
+    BottomNavItem.notifications: GlobalKey<NavigatorState>(),
+    BottomNavItem.profile: GlobalKey<NavigatorState>(),
+  };
+
   final Map<BottomNavItem, IconData> items = {
     BottomNavItem.feed: Icons.home,
     BottomNavItem.search: Icons.search,
@@ -28,6 +36,24 @@ class NavScreen extends StatelessWidget {
     );
   }
 
+  void _selectBottomNavItem(BuildContext context, BottomNavItem selectedItem, bool isSameItem) {
+    if (isSameItem) {
+      if (navigatorKeys[selectedItem] == null || navigatorKeys[selectedItem]!.currentState == null) return;
+      navigatorKeys[selectedItem]!.currentState!.popUntil((route) => route.isFirst);
+    }
+    context.read<BottomNavBarCubit>().updateSelectedItem(selectedItem);
+  }
+
+  Widget _buildOffstageNavigator(BottomNavItem currentItem, bool isSelected) {
+    return Offstage(
+      offstage: !isSelected,
+      child: TabNavigator(
+        navigatorKey: navigatorKeys[currentItem]!,
+        item: currentItem,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -35,13 +61,25 @@ class NavScreen extends StatelessWidget {
       child: BlocBuilder<BottomNavBarCubit, BottomNavBarState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(title: Text('Main')),
-            body: Text('Nav Screen'),
+            body: Stack(
+              children: items
+                  .map((item, _) => MapEntry(
+                        item,
+                        _buildOffstageNavigator(item, item == state.selectedItem),
+                      ))
+                  .values
+                  .toList(),
+            ),
             bottomNavigationBar: BottomNavBar(
               items: items,
               selectedItem: state.selectedItem,
               onTap: (index) {
-                context.read<BottomNavBarCubit>().updateSelectedItem(BottomNavItem.values[index]);
+                final selectedItem = BottomNavItem.values[index];
+                _selectBottomNavItem(
+                  context,
+                  selectedItem,
+                  selectedItem == state.selectedItem,
+                );
               },
             ),
           );
