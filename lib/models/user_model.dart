@@ -74,12 +74,12 @@ class User extends Equatable {
 
     return new User(
       id: doc.id,
-      username: data['username'] as String ?? '',
-      email: data['email'] as String ?? '',
-      profileImageUrl: data['profileImageUrl'] as String ?? '',
-      followers: data['followers'] as int ?? 0,
-      following: data['following'] as int ?? 0,
-      bio: data['bio'] as String ?? '',
+      username: data['username'] ?? '',
+      email: data['email'] ?? '',
+      profileImageUrl: data['profileImageUrl'] ?? '',
+      followers: (data['followers'] ?? 0).toInt(),
+      following: (data['following'] ?? 0).toInt(),
+      bio: data['bio'] ?? '',
     );
   }
 }
