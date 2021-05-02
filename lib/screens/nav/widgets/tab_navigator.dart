@@ -1,3 +1,4 @@
+import 'package:finsta/config/custom_router.dart';
 import 'package:finsta/enums/bottom_nav_item.dart';
 import 'package:flutter/material.dart';
 
@@ -49,6 +50,7 @@ class TabNavigator extends StatelessWidget {
           )
         ];
       },
+      onGenerateRoute: CustomRouter.onGenerateNestedRoute,
     );
   }
 }
