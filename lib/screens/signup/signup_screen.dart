@@ -67,7 +67,6 @@ class SignupScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 12.0),
                           TextFormField(
-                              initialValue: 'YoungJin Lim',
                               decoration: InputDecoration(hintText: 'User Name'),
                               onChanged: (value) => context.read<SignupCubit>().usernameChanged(value),
                               validator: (value) {
@@ -76,7 +75,6 @@ class SignupScreen extends StatelessWidget {
                               }),
                           const SizedBox(height: 12.0),
                           TextFormField(
-                            initialValue: 'caribjin@gmail.com',
                             decoration: InputDecoration(hintText: 'Email'),
                             onChanged: (value) => context.read<SignupCubit>().emailChanged(value),
                             validator: (value) {
@@ -86,7 +84,6 @@ class SignupScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 16.0),
                           TextFormField(
-                            initialValue: '11211121',
                             decoration: InputDecoration(hintText: 'Password'),
                             obscureText: true,
                             onChanged: (value) => context.read<SignupCubit>().passwordChanged(value),

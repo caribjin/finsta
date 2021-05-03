@@ -69,7 +69,6 @@ class LoginScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 12.0),
                             TextFormField(
-                              initialValue: 'caribjin@gmail.com',
                               decoration: InputDecoration(hintText: 'Email'),
                               onChanged: (value) => context.read<LoginCubit>().emailChanged(value),
                               validator: (value) {
@@ -79,7 +78,6 @@ class LoginScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 16.0),
                             TextFormField(
-                              initialValue: '11211121',
                               decoration: InputDecoration(hintText: 'Password'),
                               obscureText: true,
                               onChanged: (value) => context.read<LoginCubit>().passwordChanged(value),

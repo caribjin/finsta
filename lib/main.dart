@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:finsta/blocs/auth/auth_bloc.dart';
 import 'package:finsta/blocs/simple_bloc_observer.dart';
 import 'package:finsta/repositories/auth/auth_repository.dart';
+import 'package:finsta/repositories/repositories.dart';
 import 'package:finsta/screens/screens.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -24,8 +25,11 @@ class MyApp extends StatelessWidget {
 
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider(
+        RepositoryProvider<AuthRepository>(
           create: (_) => AuthRepository(),
+        ),
+        RepositoryProvider<UserRepository>(
+          create: (_) => UserRepository(),
         ),
       ],
       child: MultiBlocProvider(
