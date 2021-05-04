@@ -1,3 +1,4 @@
+import 'package:finsta/screens/edit_profile/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileButton extends StatelessWidget {
@@ -14,7 +15,10 @@ class ProfileButton extends StatelessWidget {
     return isCurrentUser
         ? ElevatedButton(
             onPressed: () {
-              // todo: 프로필 편집 버튼 동작 추가
+              Navigator.of(context).pushNamed(
+                EditProfileScreen.routeName,
+                arguments: EditProfileScreenArgs(context: context),
+              );
             },
             child: const Text('Edit Profile'),
           )
