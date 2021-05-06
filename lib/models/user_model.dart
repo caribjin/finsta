@@ -70,7 +70,7 @@ class User extends Equatable {
 
   factory User.fromMap(DocumentSnapshot? doc) {
     if (doc == null || doc.data() == null) return empty;
-    final data = doc.data()!;
+    final data = doc.data()! as Map;
 
     return new User(
       id: doc.id,
