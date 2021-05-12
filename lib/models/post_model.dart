@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:finsta/config/paths.dart';
 import 'package:finsta/models/models.dart';
-import 'package:flutter/material.dart';
 
 class Post extends Equatable {
   final String? id;
@@ -66,7 +65,7 @@ class Post extends Equatable {
   }
 
   static Future<Post?> fromMap(DocumentSnapshot? doc) async {
-    if (doc == null || doc.data() == null) return empty;
+    if (doc == null || doc.data() == null) return null;
     final data = doc.data() as Map;
     final authorRef = data['author'] as DocumentReference?;
 
