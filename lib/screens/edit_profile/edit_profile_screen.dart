@@ -43,10 +43,11 @@ class EditProfileScreen extends StatelessWidget {
   }
 
   void _selectProfileImage(BuildContext context) async {
-    final pickedFile = await ImageHelper.getImageFromGallery(context: context, cropStyle: CropStyle.circle, title: 'Profile Image');
+    final pickedFile =
+        await ImageHelper.getImageFromGallery(context: context, cropStyle: CropStyle.circle, title: 'Profile Image');
 
     if (pickedFile != null) {
-      context.read<EditProfileCubit>().profileImageChanged(File(pickedFile.path));
+      context.read<EditProfileCubit>().profileImageChanged(pickedFile);
     }
   }
 
