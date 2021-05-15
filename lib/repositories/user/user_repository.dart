@@ -20,4 +20,11 @@ class UserRepository extends BaseUserRepository {
   Future<void> updateUser({required User user}) async {
     await _firebaseFirestore.collection(Paths.users).doc(user.id).update(user.toMap());
   }
+
+  @override
+  Future<List<User>> searchUsers({required String query}) async {
+    final userSnap =
+        await _firebaseFirestore.collection(Paths.users).where('username', isGreaterThanOrEqualTo: query).get();
+    return userSnap.docs.map((doc) => User.fromMap(doc)).toList();
+  }
 }
