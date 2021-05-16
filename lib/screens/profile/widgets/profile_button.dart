@@ -1,5 +1,7 @@
 import 'package:finsta/screens/edit_profile/edit_profile_screen.dart';
+import 'package:finsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileButton extends StatelessWidget {
   final bool isCurrentUser;
@@ -24,7 +26,9 @@ class ProfileButton extends StatelessWidget {
           )
         : ElevatedButton(
             onPressed: () {
-              // todo: follow / unfollow 동작 추가
+              isFollowing
+                  ? context.read<ProfileBloc>().add(ProfileUnfollowUser())
+                  : context.read<ProfileBloc>().add(ProfileFollowUser());
             },
             style: ElevatedButton.styleFrom(
               primary: isFollowing ? Colors.grey[300] : Theme.of(context).primaryColor,
