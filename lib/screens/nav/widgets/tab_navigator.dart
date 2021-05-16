@@ -4,6 +4,7 @@ import 'package:finsta/enums/bottom_nav_item.dart';
 import 'package:finsta/repositories/repositories.dart';
 import 'package:finsta/screens/create_post/cubit/create_post_cubit.dart';
 import 'package:finsta/screens/profile/bloc/profile_bloc.dart';
+import 'package:finsta/screens/search/cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,7 +31,12 @@ class TabNavigator extends StatelessWidget {
       case BottomNavItem.feed:
         return FeedScreen();
       case BottomNavItem.search:
-        return SearchScreen();
+        return BlocProvider<SearchCubit>(
+          create: (context) => SearchCubit(
+            userRepository: context.read<UserRepository>(),
+          ),
+          child: SearchScreen(),
+        );
       case BottomNavItem.create:
         return BlocProvider<CreatePostCubit>(
           create: (context) => CreatePostCubit(
