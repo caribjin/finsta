@@ -24,9 +24,9 @@ exports.onFollowUser = functions.firestore
         const userDoc = await userRef.get();
 
         if (userDoc.get('following')) {
-            await userRef.update({ following: userDoc.get('following') + 1 });
+            await userRef.update({following: userDoc.get('following') + 1});
         } else {
-            await userRef.update( { following: 1 });
+            await userRef.update({following: 1});
         }
 
         // 팔로우 된 사용자의 post를 팔로우 한 사용자의 feed에 추가한다.
@@ -62,9 +62,9 @@ exports.onUnfollowUser = functions.firestore
         const userDoc = await userRef.get();
 
         if (userDoc.get('following')) {
-            await userRef.update({ following: userDoc.get('following') - 1 });
+            await userRef.update({following: userDoc.get('following') - 1});
         } else {
-            await userRef.update( { following: 0 });
+            await userRef.update({following: 0});
         }
 
         // 팔로우 된 사용자의 post를 팔로우 한 사용자의 feed에 추가한다.
@@ -75,5 +75,20 @@ exports.onUnfollowUser = functions.firestore
             if (doc.exists) {
                 doc.ref.delete();
             }
+        });
+    });
+
+exports.onCreatePost = functions.firestore
+    .document('/posts/{postId}')
+    .onCreate(async (snapshot, context) => {
+        const postId = context.params.postId;
+        const authorRef = snapshot.get('author');
+        const authorId = authorRef.path.split('/')[1];
+
+        const userFollowersRef = admin.firestore().collection('followers').doc(authorId).collection('userFollowers');
+        const userFollowersSnapshot = await userFollowersRef.get();
+
+        userFollowersSnapshot.forEach(doc => {
+           admin.firestore().collection('feeds').doc(doc.id).collection('userFeed').doc(postId).set(snapshot.data());
         });
     });
