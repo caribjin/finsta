@@ -80,7 +80,6 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                             isCurrentUser: state.isCurrentUser,
                             isFollowing: state.isFollowing,
                             posts: state.posts.length,
-                            // state.post.length,
                             followers: state.user.followers,
                             following: state.user.following,
                           ),

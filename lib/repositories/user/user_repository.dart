@@ -67,7 +67,7 @@ class UserRepository extends BaseUserRepository {
     final otherUserDoc = await _firebaseFirestore
         .collection(Paths.following)
         .doc(userId)
-        .collection(Paths.userFollowers)
+        .collection(Paths.userFollowing)
         .doc(otherUserId)
         .get();
 
