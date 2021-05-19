@@ -57,7 +57,7 @@ class PostRepository extends BasePostRepository {
         .collection(Paths.feeds)
         .doc(userId)
         .collection(Paths.userFeed)
-        .orderBy('data', descending: true)
+        .orderBy('date', descending: true)
         .get();
 
     final posts = Future.wait(postsSnapshot.docs.map((doc) => Post.fromMap(doc)).toList());
