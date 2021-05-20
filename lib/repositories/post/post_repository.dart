@@ -4,6 +4,8 @@ import 'package:finsta/models/comment_model.dart';
 import 'package:finsta/models/post_model.dart';
 import 'package:finsta/repositories/repositories.dart';
 
+const int paginationLimit = 5;
+
 class PostRepository extends BasePostRepository {
   final FirebaseFirestore _firebaseFirestore;
 
@@ -52,13 +54,34 @@ class PostRepository extends BasePostRepository {
   }
 
   @override
-  Future<List<Post?>> getUserFeed({required String userId}) async {
-    final postsSnapshot = await _firebaseFirestore
-        .collection(Paths.feeds)
-        .doc(userId)
-        .collection(Paths.userFeed)
-        .orderBy('date', descending: true)
-        .get();
+  Future<List<Post?>> getUserFeed({required String userId, String? lastPostId}) async {
+    final QuerySnapshot postsSnapshot;
+
+    if (lastPostId == null) {
+      postsSnapshot = await _firebaseFirestore
+          .collection(Paths.feeds)
+          .doc(userId)
+          .collection(Paths.userFeed)
+          .orderBy('date', descending: true)
+          .limit(paginationLimit)
+          .get();
+    } else {
+      final lastPostDoc =
+          await _firebaseFirestore.collection(Paths.feeds).doc(userId).collection(Paths.userFeed).doc(lastPostId).get();
+
+      if (!lastPostDoc.exists) {
+        return [];
+      }
+
+      postsSnapshot = await _firebaseFirestore
+          .collection(Paths.feeds)
+          .doc(userId)
+          .collection(Paths.userFeed)
+          .orderBy('date', descending: true)
+          .startAfterDocument(lastPostDoc)
+          .limit(paginationLimit)
+          .get();
+    }
 
     final posts = Future.wait(postsSnapshot.docs.map((doc) => Post.fromMap(doc)).toList());
 

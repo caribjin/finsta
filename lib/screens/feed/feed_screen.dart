@@ -12,6 +12,28 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+          !_scrollController.position.outOfRange &&
+          context.read<FeedBloc>().state.status != FeedStatus.paginating) {
+        context.read<FeedBloc>().add(FeedPaginatePosts());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   Widget _buildBody(FeedState state) {
     switch (state.status) {
       case FeedStatus.loading:
@@ -19,6 +41,7 @@ class _FeedScreenState extends State<FeedScreen> {
       default:
         return RefreshIndicator(
           child: ListView.builder(
+              controller: _scrollController,
               itemCount: state.posts.length,
               itemBuilder: (context, index) {
                 final post = state.posts[index];

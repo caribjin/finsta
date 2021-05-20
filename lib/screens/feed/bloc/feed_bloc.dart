@@ -49,7 +49,11 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     yield state.copyWith(status: FeedStatus.paginating);
 
     try {
-      // todo: paginating
+      final lastPostId = state.posts.isNotEmpty ? state.posts.last!.id : null;
+      final posts = await _postRepository.getUserFeed(userId: _authBloc.state.user!.uid, lastPostId: lastPostId);
+      final updatedPosts = List<Post?>.from(state.posts)..addAll(posts);
+
+      yield state.copyWith(posts: updatedPosts, status: FeedStatus.loaded);
     } catch (error) {
       yield state.copyWith(
         status: FeedStatus.error,
