@@ -1,5 +1,6 @@
 import 'package:finsta/blocs/blocs.dart';
 import 'package:finsta/config/custom_router.dart';
+import 'package:finsta/cubits/liked_post/liked_post_cubit.dart';
 import 'package:finsta/enums/bottom_nav_item.dart';
 import 'package:finsta/repositories/repositories.dart';
 import 'package:finsta/screens/create_post/cubit/create_post_cubit.dart';
@@ -34,6 +35,7 @@ class TabNavigator extends StatelessWidget {
           create: (context) => FeedBloc(
             postRepository: context.read<PostRepository>(),
             authBloc: context.read<AuthBloc>(),
+            likedPostCubit: context.read<LikedPostCubit>(),
           )..add(FeedFetchPosts()),
           child: FeedScreen(),
         );
@@ -61,6 +63,7 @@ class TabNavigator extends StatelessWidget {
             userRepository: context.read<UserRepository>(),
             postRepository: context.read<PostRepository>(),
             authBloc: context.read<AuthBloc>(),
+            likedPostCubit: context.read<LikedPostCubit>(),
           )..add(ProfileLoadUser(userId: context.read<AuthBloc>().state.user!.uid)),
           child: ProfileScreen(),
         );

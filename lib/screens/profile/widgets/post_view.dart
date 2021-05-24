@@ -8,11 +8,15 @@ import 'package:finsta/extensions/extensions.dart';
 class PostView extends StatelessWidget {
   final Post post;
   final bool isLiked;
+  final VoidCallback onLike;
+  final bool recentlyLiked;
 
   const PostView({
     Key? key,
     required this.post,
     required this.isLiked,
+    required this.onLike,
+    this.recentlyLiked = false,
   }) : super(key: key);
 
   @override
@@ -22,8 +26,10 @@ class PostView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
-            onTap: () => Navigator.of(context)
-                .pushNamed(ProfileScreen.routeName, arguments: ProfileScreenArgs(userId: post.author.id)),
+            onTap: () => Navigator.of(context).pushNamed(
+              ProfileScreen.routeName,
+              arguments: ProfileScreenArgs(userId: post.author.id),
+            ),
             child: Row(
               children: [
                 UserProfileImage(
@@ -44,9 +50,7 @@ class PostView extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onDoubleTap: () {
-            // todo: 이미지를 더블탭 했을 때 좋아함 올리는 로직 추가.
-          },
+          onDoubleTap: onLike,
           child: CachedNetworkImage(
             imageUrl: post.imageUrl,
             fit: BoxFit.cover,
@@ -58,7 +62,7 @@ class PostView extends StatelessWidget {
           children: [
             IconButton(
               icon: isLiked ? const Icon(Icons.favorite, color: Colors.red) : const Icon(Icons.favorite_outline),
-              onPressed: () {},
+              onPressed: onLike,
             ),
             IconButton(
               icon: const Icon(Icons.comment_outlined),
@@ -72,7 +76,7 @@ class PostView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                '${post.likes} likes',
+                '${recentlyLiked ? post.likes + 1 : post.likes} likes',
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 4.0),

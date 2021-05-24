@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finsta/blocs/blocs.dart';
+import 'package:finsta/cubits/liked_post/liked_post_cubit.dart';
 import 'package:finsta/repositories/repositories.dart';
 import 'package:finsta/screens/profile/bloc/profile_bloc.dart';
 import 'package:finsta/screens/profile/widgets/widgets.dart';
@@ -24,6 +25,7 @@ class ProfileScreen extends StatefulWidget {
           userRepository: context.read<UserRepository>(),
           postRepository: context.read<PostRepository>(),
           authBloc: context.read<AuthBloc>(),
+          likedPostCubit: context.read<LikedPostCubit>(),
         )..add(ProfileLoadUser(userId: args.userId)),
         child: ProfileScreen(),
       ),
@@ -147,9 +149,21 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           final post = state.posts[index];
 
                           if (post == null) return null;
+
+                          final likedPostsState = context.watch<LikedPostCubit>().state;
+                          final isLiked = likedPostsState.likedPostIds.contains(post.id);
+                          final recentlyLiked = likedPostsState.recentlyLikedPostIds.contains(post.id);
+
                           return PostView(
                             post: post,
-                            isLiked: false,
+                            isLiked: isLiked,
+                            onLike: () {
+                              if (isLiked) {
+                                context.read<LikedPostCubit>().unlikePost(post: post);
+                              } else {
+                                context.read<LikedPostCubit>().likePost(post: post);
+                              }
+                            },
                           );
                         },
                         childCount: state.posts.length,
@@ -181,7 +195,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
               if (state.isCurrentUser)
                 IconButton(
                   icon: Icon(Icons.exit_to_app),
-                  onPressed: () => context.read<AuthBloc>().add(AuthLogoutRequested()),
+                  onPressed: () {
+                    context.read<AuthBloc>().add(AuthLogoutRequested());
+                    context.read<LikedPostCubit>().clearAllLikedPosts();
+                  },
                 ),
             ],
           ),

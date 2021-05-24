@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:finsta/blocs/blocs.dart';
+import 'package:finsta/cubits/liked_post/liked_post_cubit.dart';
 import 'package:finsta/models/models.dart';
 import 'package:finsta/repositories/post/post_repository.dart';
 
@@ -13,10 +14,15 @@ part 'feed_state.dart';
 class FeedBloc extends Bloc<FeedEvent, FeedState> {
   final PostRepository _postRepository;
   final AuthBloc _authBloc;
+  final LikedPostCubit _likedPostCubit;
 
-  FeedBloc({required PostRepository postRepository, required AuthBloc authBloc})
-      : _postRepository = postRepository,
+  FeedBloc({
+    required PostRepository postRepository,
+    required AuthBloc authBloc,
+    required LikedPostCubit likedPostCubit,
+  })   : _postRepository = postRepository,
         _authBloc = authBloc,
+        _likedPostCubit = likedPostCubit,
         super(FeedState.initial());
 
   @override
@@ -36,6 +42,15 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
     try {
       final posts = await _postRepository.getUserFeed(userId: _authBloc.state.user!.uid);
 
+      _likedPostCubit.clearAllLikedPosts();
+
+      final likedPostIds = await _postRepository.getLikedPostIds(
+        posts: posts,
+        userId: _authBloc.state.user!.uid,
+      );
+
+      _likedPostCubit.updateLikedPosts(postIds: likedPostIds);
+
       yield state.copyWith(posts: posts, status: FeedStatus.loaded);
     } catch (error) {
       yield state.copyWith(
@@ -52,6 +67,13 @@ class FeedBloc extends Bloc<FeedEvent, FeedState> {
       final lastPostId = state.posts.isNotEmpty ? state.posts.last!.id : null;
       final posts = await _postRepository.getUserFeed(userId: _authBloc.state.user!.uid, lastPostId: lastPostId);
       final updatedPosts = List<Post?>.from(state.posts)..addAll(posts);
+
+      final likedPostIds = await _postRepository.getLikedPostIds(
+        posts: posts,
+        userId: _authBloc.state.user!.uid,
+      );
+
+      _likedPostCubit.updateLikedPosts(postIds: likedPostIds);
 
       yield state.copyWith(posts: updatedPosts, status: FeedStatus.loaded);
     } catch (error) {

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:finsta/blocs/auth/auth_bloc.dart';
 import 'package:finsta/blocs/simple_bloc_observer.dart';
+import 'package:finsta/cubits/liked_post/liked_post_cubit.dart';
 import 'package:finsta/repositories/auth/auth_repository.dart';
 import 'package:finsta/repositories/repositories.dart';
 import 'package:finsta/screens/screens.dart';
@@ -40,9 +41,15 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
+          BlocProvider<AuthBloc>(
             create: (context) => AuthBloc(
               authRepository: context.read<AuthRepository>(),
+            ),
+          ),
+          BlocProvider<LikedPostCubit>(
+            create: (context) => LikedPostCubit(
+              postRepository: context.read<PostRepository>(),
+              authBloc: context.read<AuthBloc>(),
             ),
           ),
         ],

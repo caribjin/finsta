@@ -1,3 +1,4 @@
+import 'package:finsta/cubits/liked_post/liked_post_cubit.dart';
 import 'package:finsta/screens/feed/bloc/feed_bloc.dart';
 import 'package:finsta/screens/profile/widgets/post_view.dart';
 import 'package:finsta/widgets/error_dialog.dart';
@@ -45,9 +46,25 @@ class _FeedScreenState extends State<FeedScreen> {
               itemCount: state.posts.length,
               itemBuilder: (context, index) {
                 final post = state.posts[index];
+
                 if (post == null) return SizedBox.shrink();
 
-                return PostView(post: post, isLiked: false);
+                final likedPostsState = context.watch<LikedPostCubit>().state;
+                final isLiked = likedPostsState.likedPostIds.contains(post.id);
+                final recentlyLiked = likedPostsState.recentlyLikedPostIds.contains(post.id);
+
+                return PostView(
+                  post: post,
+                  isLiked: isLiked,
+                  recentlyLiked: recentlyLiked,
+                  onLike: () {
+                    if (isLiked) {
+                      context.read<LikedPostCubit>().unlikePost(post: post);
+                    } else {
+                      context.read<LikedPostCubit>().likePost(post: post);
+                    }
+                  },
+                );
               }),
           onRefresh: () async {
             context.read<FeedBloc>().add(FeedFetchPosts());
